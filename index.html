@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>notes taker</title>
+</head>
+<body id="main">
+    <nav class="navbar">
+        <ul class="navbar__list">
+            <li class="navbar__list___item">
+                <a class="navbar__list___item__link" href="">accueil</a>
+            </li>
+            <li class="navbar__list___item">
+                <a class="navbar__list___item__link" href="">accueil</a>
+            </li>
+            <li class="navbar__list___item">
+                <a class="navbar__list___item__link" href="">accueil</a>
+            </li>
+        </ul>
+    </nav>
+
+    <section class="convert">
+        <textarea class="convert__textarea"></textarea>
+        <button class="convert__button">convertir</button>
+        <select class="convert__select">
+            <option value="all">séparer tout</option>
+            <option value="comma">séparer virgules</option>
+            <option value="dot">séparer points</option>
+            <option value="quote">séparer guillemets</option>
+            <option value="linebreak">séparer saut de lignes</option>
+        </select>
+    </section>
+
+    <section class="convertedText">
+        <div class="convertedText__container">
+
+        </div>
+    </section>
+
+    <section class="selectedText">
+        <textarea class="selectedText__Textarea" name="editor1"></textarea>
+        <button class="selectedText__copyBtn">copier</button>
+    </section>
+</body>
+</html>
+
+<script>
+    let converter ={
+        button : document.querySelector("button"),
+        copyBtn : document.querySelector(".selectedText__copyBtn"),
+        textareaContent : "",
+        parent : document.querySelector(".convertedText__container"),
+        storedStatements : [],
+        selected : [],
+        index : 0,
+        savedSelectedStatement : "",
+        selectedSeparator : document.querySelector(".convert__select").value,
+        
+        initialiseObject : ()=>{
+            converter.parent.tabIndex = "0";
+            converter.setValues();
+            converter.addConvertBtnListener();
+            converter.addCopyBtnListener();
+            converter.addSelectedSeparatorListener();
+        },
+
+        setValues : ()=>{
+            converter.parent.innerHTML = "";
+            converter.textareaContent = document.querySelector(".convert__textarea").value;
+        },
+
+        addConvertBtnListener : ()=>{
+                converter.button.addEventListener("click", ()=>{
+                converter.setValues();
+                converter.getRidOf(converter.selectedSeparator);
+                converter.convertText(converter.textareaContent);
+                converter.statementsHandler.navigate();
+            });
+        },
+
+        addCopyBtnListener : ()=>{
+                converter.copyBtn.addEventListener("click", ()=>{
+                    let textarea = document.querySelector(".selectedText__Textarea");
+                    textarea.select();
+                    document.execCommand("copy");
+                });
+        },
+
+        addSelectedSeparatorListener : ()=>{
+            document.querySelector(".convert__select").addEventListener("change", ()=>{
+                converter.selectedSeparator = document.querySelector(".convert__select").value;
+            });
+        },
+
+        addStatementsListener : ()=>{
+            // ajouter methode on click
+            // console.log(converter.storedStatements.length + " shit");
+            converter.storedStatements.forEach((el, index)=>{
+                el.addEventListener("click", ()=>{
+                    let text = el.textContent;
+                    converter.index = index;
+                    converter.statementsHandler.selectStatement();
+                });
+
+                el.addEventListener("mouseenter", ()=>{
+                    let lastSelectedStatement = converter.parent.children[converter.index];
+                    converter.colorHandler.saveSelectedStatement(lastSelectedStatement);
+                    let changeIndex = converter.index = index;
+                    converter.colorHandler.changeStatementColorHover(el);
+                    console.log(converter.savedSelectedStatement);
+                });
+            });
+        },
+
+        convertText : (text)=>{
+            text.forEach((el)=>{
+               converter.appendToConvertedTextarea(el);
+            });
+            converter.addStatementsListener();
+        },
+
+        getRidOf: (selectedSeparator)=>{
+            switch (selectedSeparator) {
+                case "dot":
+                    converter.textareaContent = converter.textareaContent.split(/[.]/g);
+                    break;
+
+                case "comma":
+                    converter.textareaContent = converter.textareaContent.split(/[,]/g);
+                    break;
+
+                case "linebreak":
+                    converter.textareaContent = converter.textareaContent.split(/[\n]/g);
+                    break;
+
+                case "quote":
+                    converter.textareaContent = converter.textareaContent.split(/["]/g);
+                    break;
+
+                case "all":
+                converter.textareaContent = converter.textareaContent.split(/[\n\.\,\"]/g);
+                    break;
+            
+                default:
+                    console.log("not a valid selection");
+                    break;
+            }
+        },
+
+
+
+        appendToConvertedTextarea : (text)=>{
+             let child = document.createElement("p");
+                let textContent = document.createTextNode("- " + text);
+                child.classList.add("convertedText__container_phrase");
+
+                converter.storedStatements.push(child);
+                child.appendChild(textContent);
+                converter.parent.appendChild(child);
+        },
+
+
+
+        colorHandler : {
+            maxIndex : "",
+
+            saveSelectedStatement : (element)=>{
+                converter.savedSelectedStatement = element;
+            },
+
+            changeStatementColorHover : (element)=>{
+                converter.savedSelectedStatement.style.backgroundColor = "white";
+                element.style.backgroundColor = "grey";
+            },
+
+            changeStatementColorKeydown : (downOrUp)=>{
+                if(downOrUp == "down"){
+                    converter.colorHandler.saveSelectedStatement(converter.storedStatements[converter.index]);
+                    converter.savedSelectedStatement.style.backgroundColor = "white";
+                    converter.index --
+                    converter.colorHandler.checkIndexSmaller();
+                }else{
+                    converter.colorHandler.saveSelectedStatement(converter.storedStatements[converter.index]);
+                    converter.savedSelectedStatement.style.backgroundColor = "white";
+                    converter.index ++
+                    converter.colorHandler.checkIndexBigger();                    
+                }
+            },
+
+            checkIndexBigger : ()=>{
+                if(converter.index > converter.colorHandler.maxIndex){
+                        converter.index = 0;
+                        converter.storedStatements[converter.index].style.backgroundColor = "grey";
+                        converter.storedStatements[converter.index].scrollIntoView();
+                    }else{
+                        converter.storedStatements[converter.index].style.backgroundColor = "grey";
+                        converter.storedStatements[converter.index].scrollIntoView();
+                    }
+            },
+
+            checkIndexSmaller : () =>{
+                if(converter.index < 0){
+                        converter.index = converter.colorHandler.maxIndex;
+                        converter.storedStatements[converter.index].style.backgroundColor = "grey";
+                        converter.storedStatements[converter.index].scrollIntoView();
+                    }else{
+                        converter.storedStatements[converter.index].style.backgroundColor = "grey";
+                        converter.storedStatements[converter.index].scrollIntoView();
+                    }
+            },
+
+
+        },
+
+        statementsHandler : {
+            navigate : ()=>{
+                let mainObj = converter.statementsHandler;
+                converter.colorHandler.maxIndex = converter.storedStatements.length-1;
+                converter.storedStatements[converter.index].style.backgroundColor = "grey";
+
+                converter.parent.addEventListener("keydown", (e)=>{
+                    e.preventDefault();
+                    let key = e.keyCode;
+                    if(key == 40){ //up
+                        converter.colorHandler.changeStatementColorKeydown("up");
+                    }
+                    if(key == 38){ //down
+                        converter.colorHandler.changeStatementColorKeydown("down");
+                    }
+
+                    if(key == 13){ //enter
+                        mainObj.selectStatement();
+                    }
+                    if(key == 32){ //enter
+                        mainObj.selectBoldStatement();
+                    }
+                });
+            },
+
+            selectStatement : ()=>{
+                let mainObj = converter.statementsHandler;
+                let text = converter.storedStatements[converter.index].textContent + "\n" + "\n";
+                        if(mainObj.isAlreadyInStored(text)){
+                            let indxOfAlreadyStoredStatement = converter.selected.indexOf(text);
+                            mainObj.deleteStatement(indxOfAlreadyStoredStatement);
+                            
+                        }else{
+                            mainObj.addStatement(text);
+                        }
+            },
+
+            deleteStatement : (indx)=>{
+                converter.selected.splice(indx, 1);
+                converter.statementsHandler.addToSelectedTextarea();
+            },
+
+            addStatement : (text)=>{
+                converter.selected.push(text);
+                converter.statementsHandler.addToSelectedTextarea();
+            },
+
+            addToSelectedTextarea : ()=>{
+                let selected = document.querySelector(".selectedText__Textarea");
+                selected.value = "";
+                converter.selected.forEach((el)=>{
+                    selected.value += el;
+                });
+            },
+
+            isAlreadyInStored : (chosenStatement)=>{
+                let indxOfAlreadyStoredStatement = converter.selected.indexOf(chosenStatement);
+                
+                if(indxOfAlreadyStoredStatement != -1){
+                    return true
+                }else{
+                    return false
+                }
+            },
+        },
+    }
+
+
+    converter.initialiseObject();
+
+
+
+</script>
+
+
+<style>
+
+*{
+    box-sizing: border-box;
+    margin : 0;
+    padding: 0; 
+}
+
+html{
+    font-size: 16px;
+}
+
+#main{
+    display: grid;
+    grid-template-areas: 
+    "navbar navbar"
+    "convertBtn convertBtn"
+    "convertedText selectedText"
+    ;
+
+    grid-template-rows: 6rem 0.2fr auto;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+    width: 100vw;
+}
+
+.navbar{
+    grid-area: navbar;
+    background-color: #0469FF;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.convert{
+    grid-area: convertBtn;
+    background-color: cadetblue;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.convert__textarea{
+width: 80%;
+height: 80%;
+}
+
+.convert__button{
+
+}
+
+.convertedText{
+    grid-area: convertedText;
+    background-color: aqua;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.convertedText__container{
+    width: 80%;
+    height: 60vh;
+    border: 1px solid black;
+    background-color: white;
+    overflow-y: scroll;
+}
+
+.convertedText__container_phrase{
+    margin: 1rem auto; 
+}
+
+.selectedText{
+    grid-area: selectedText;
+    background-color: aquamarine;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.selectedText__Textarea{
+    width: 80%;
+    height: 60vh;
+}
+
+
+</style>
