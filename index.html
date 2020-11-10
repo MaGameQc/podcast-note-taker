@@ -210,6 +210,10 @@
                     }
             },
 
+            colorPurple : (element) =>{
+                element.backgroundColor = "purple";
+            },
+
 
         },
 
@@ -231,6 +235,7 @@
 
                     if(key == 13){ //enter
                         mainObj.selectStatement();
+                        converter.colorHandler.colorPurple(converter.storedStatements[converter.index].style);
                     }
                     if(key == 32){ //enter
                         mainObj.selectBoldStatement();
@@ -240,7 +245,7 @@
 
             selectStatement : ()=>{
                 let mainObj = converter.statementsHandler;
-                let text = converter.storedStatements[converter.index].textContent + "\n" + "\n";
+                let text = converter.storedStatements[converter.index].textContent + "\n";
                         if(mainObj.isAlreadyInStored(text)){
                             let indxOfAlreadyStoredStatement = converter.selected.indexOf(text);
                             mainObj.deleteStatement(indxOfAlreadyStoredStatement);
