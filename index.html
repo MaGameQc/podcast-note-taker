@@ -20,8 +20,9 @@
         </ul>
     </nav>
 
+<div class="cont">
     <section class="convert">
-        <textarea class="convert__textarea"></textarea>
+        <textarea class="convert__textarea" tabindex="1"></textarea>
         <button class="convert__button">convertir</button>
         <select class="convert__select">
             <option value="all">séparer tout</option>
@@ -32,16 +33,17 @@
         </select>
     </section>
 
-    <section class="convertedText">
-        <div class="convertedText__container">
+    <section class="convertedText" >
+        <div class="convertedText__container" tabindex="2">
 
         </div>
     </section>
 
-    <section class="selectedText">
-        <textarea class="selectedText__Textarea" name="editor1"></textarea>
+    <section class="selectedText" >
+        <textarea class="selectedText__Textarea"     tabindex="3"></textarea>
         <button class="selectedText__copyBtn">copier</button>
     </section>
+</div>
 </body>
 </html>
 
@@ -58,7 +60,7 @@
         selectedSeparator : document.querySelector(".convert__select").value,
         
         initialiseObject : ()=>{
-            converter.parent.tabIndex = "0";
+            // converter.parent.tabIndex = "0";
             converter.setValues();
             converter.addConvertBtnListener();
             converter.addCopyBtnListener();
@@ -288,6 +290,78 @@
 
     converter.initialiseObject();
 
+    let mouseEvents = {
+        elementsToListen : [
+            document.querySelector(".convert"),
+            document.querySelector(".convertedText"),
+            document.querySelector(".selectedText"),
+        ],
+
+        textareaToListen : [
+            document.querySelector(".convert__textarea"),
+            document.querySelector(".convertedText__container"),
+            document.querySelector(".selectedText__Textarea"),
+        ],
+
+        isFocused : "",
+
+        setInitialFocus : ()=>{
+            document.querySelector(".convert__textarea").focus();
+            mouseEvents.isFocused = document.activeElement.className;
+            console.log(mouseEvents.isFocused);
+            mouseEvents.elementsToListen[0].classList.remove("blur");
+        },
+
+        saveFocus : (elClass)=>{
+            mouseEvents.isFocused = elClass; 
+            console.log(elClass + " saved");
+        },
+
+        setFocus : ()=>{
+            let element = document.querySelector("." + mouseEvents.isFocused + "");
+            element.classList.remove("blur");
+            // element.classList.add("focus");
+            console.log(element);
+        },
+
+        blurElements : ()=>{
+            mouseEvents.elementsToListen.forEach((el)=>{
+                el.classList.add("blur");
+            });
+        },
+
+        focusListener : ()=>{
+            mouseEvents.textareaToListen.forEach((el, index)=>{
+                el.addEventListener("focusin", ()=>{
+                    mouseEvents.elementsToListen[index].classList.remove("blur");
+                    mouseEvents.saveFocus(mouseEvents.elementsToListen[index].className);
+                });
+                el.addEventListener("focusout", ()=>{
+                    mouseEvents.elementsToListen[index].classList.add("blur");
+                });
+            });
+        },
+
+        hover : ()=>{
+            mouseEvents.elementsToListen.forEach((el)=>{
+                el.addEventListener("mouseenter", ()=>{
+                    mouseEvents.blurElements();
+                    el.classList.remove("blur");
+                });
+                el.addEventListener("mouseleave", ()=>{
+                    mouseEvents.blurElements();
+                    mouseEvents.setFocus();
+
+                });
+            });
+        }
+    }
+
+    mouseEvents.blurElements();
+    mouseEvents.focusListener();
+    mouseEvents.hover();
+    mouseEvents.setInitialFocus();          
+
 
 
 </script>
@@ -308,15 +382,19 @@ html{
 #main{
     display: grid;
     grid-template-areas: 
-    "navbar navbar"
-    "convertBtn convertBtn"
-    "convertedText selectedText"
+    "navbar"
+    "cont"
     ;
 
-    grid-template-rows: 6rem 0.2fr auto;
-    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 6rem  1fr;
+    grid-template-columns: 1fr;
     min-height: 100vh;
     width: 100vw;
+}
+
+.cont{
+    grid-area: cont;
+    display: flex;
 }
 
 .navbar{
@@ -333,12 +411,38 @@ html{
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: center; 
+    width: 100%;
+    animation : reset .5s ease-out forwards;
+}
+.convert:hover{
+    animation : focus .5s ease-out forwards;
+}
+
+.reset{
+    animation : reset .5s ease-out forwards;
+}
+
+.focus{
+    animation : focus .5s ease-out forwards;
+}
+
+@keyframes reset{
+    from{width: 250%; }
+    to{width: 100%;}
+}
+
+@keyframes focus {
+    from{width: 100%;}
+    to{width: 250%; }
+}
+.blur{
+    filter: blur(2px);
 }
 
 .convert__textarea{
 width: 80%;
-height: 80%;
+height: 60vh;
 }
 
 .convert__button{
@@ -351,6 +455,12 @@ height: 80%;
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    animation : reset .5s ease-out forwards;
+}
+
+.convertedText:hover{
+    animation : focus .5s ease-out forwards;
 }
 
 .convertedText__container{
@@ -371,7 +481,11 @@ height: 80%;
     display: flex;
     justify-content: center;
     align-items: center;
-
+    width: 100%;
+    animation : reset .5s ease-out forwards;
+}
+.selectedText:hover{
+    animation : focus .5s ease-out forwards;
 }
 
 .selectedText__Textarea{
