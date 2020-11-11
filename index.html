@@ -7,22 +7,12 @@
 </head>
 <body id="main">
     <nav class="navbar">
-        <ul class="navbar__list">
-            <li class="navbar__list___item">
-                <a class="navbar__list___item__link" href="">accueil</a>
-            </li>
-            <li class="navbar__list___item">
-                <a class="navbar__list___item__link" href="">accueil</a>
-            </li>
-            <li class="navbar__list___item">
-                <a class="navbar__list___item__link" href="">accueil</a>
-            </li>
-        </ul>
+        <h1>Easy notes taker for podcasts</h1>
     </nav>
 
 <div class="cont">
     <section class="convert">
-        <h1>insérer texte ici</h1>
+        <h1 class="title">insérer texte ici</h1>
         <textarea class="convert__textarea" tabindex="1"></textarea>
         <button class="convert__button" tabindex="2">convertir</button>
         <select class="convert__select">
@@ -35,14 +25,14 @@
     </section>
 
     <section class="convertedText" >
-        <h1>choisir phrases à noter</h1>
+        <h1 class="title">choisir phrases à noter</h1>
         <div class="convertedText__container" tabindex="3">
 
         </div>
     </section>
 
     <section class="selectedText" >
-        <h1>notes</h1>
+        <h1 class="title">notes</h1>
         <textarea class="selectedText__Textarea"     tabindex="4"></textarea>
         <button class="selectedText__copyBtn">copier</button>
     </section>
@@ -402,6 +392,28 @@ html{
     width: 100vw;
 }
 
+button{
+    padding: 1rem;
+    margin: 0.6rem 0;
+    background-color: #535353;
+    font-size: 1rem;
+    color: white;
+    border: solid 0.1rem rgb(190, 190, 190);
+}
+button:hover, button:focus{
+    border: solid 0.5rem rgb(0, 143, 209);
+    box-shadow: 0 0 1.5rem  rgb(0, 143, 209);
+    cursor: pointer;
+    margin: 0.2rem 0 ;
+    outline: none;
+}
+
+.title{
+    color : white;
+    border-bottom :solid 0.3rem rgb(0, 143, 209);
+    margin-bottom : 0.5rem;
+}
+
 .cont{
     grid-area: cont;
     display: flex;
@@ -409,15 +421,16 @@ html{
 
 .navbar{
     grid-area: navbar;
-    background-color: #0469FF;
+    background-color: #383838;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
+    color : white;
 }
 
 .convert{
     grid-area: convertBtn;
-    background-color: cadetblue;
+    background-color: #383838;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -435,6 +448,7 @@ html{
 
 .focus{
     animation : focus .3s ease-out forwards !important;
+    background-color: #535353 !important;
 }
 
 @keyframes reset{
@@ -447,23 +461,48 @@ html{
     to{width: 250%; }
 }
 .blur{
-    filter: blur(2px);
+    /* filter: blur(2px); */
 }
 
 .convert__textarea{
 width: 80%;
 height: 60vh;
-outline-color: rgb(0, 38, 209);
-
+outline: none;
+color: #535353;
+}
+.convert__textarea:focus{
+    border: solid 0.5rem rgb(0, 143, 209);
+    box-shadow: 0 0 1.5rem  rgb(0, 143, 209);
 }
 
 .convert__button{
 
 }
 
+.convert__select{
+    background-color: #535353;
+    color : white;
+    font-size: 1rem;
+    padding: 1rem;
+
+    margin: 0.6rem 0;
+    border: solid 0.1rem rgb(190, 190, 190);
+}
+.convert__select:hover{
+    background-color: #535353;
+    color : white;
+    font-size: 1rem;
+    padding: 1rem;
+    border: solid 0.5rem rgb(0, 143, 209);
+    box-shadow: 0 0 1.5rem  rgb(0, 143, 209);
+    cursor: pointer;
+    margin: 0.2rem 0 ;
+}
+
+
 .convertedText{
     grid-area: convertedText;
-    background-color: aqua;
+    background-color: #383838;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -482,8 +521,13 @@ outline-color: rgb(0, 38, 209);
     border: 1px solid black;
     background-color: white;
     overflow-y: scroll;
-    outline-color: rgb(0, 38, 209);
+    outline: none;
+    color: #535353;
 
+}
+.convertedText__container:focus{
+    border: solid 0.5rem rgb(0, 143, 209);
+    box-shadow: 0 0 1.5rem  rgb(0, 143, 209);
 }
 
 .convertedText__container_phrase{
@@ -492,7 +536,7 @@ outline-color: rgb(0, 38, 209);
 
 .selectedText{
     grid-area: selectedText;
-    background-color: aquamarine;
+    background-color: #383838;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -507,9 +551,14 @@ outline-color: rgb(0, 38, 209);
 .selectedText__Textarea{
     width: 80%;
     height: 60vh;
-    outline-color: rgb(0, 38, 209);
-
+    outline: none;
+    color: #535353;
 }
+.selectedText__Textarea:focus{
+    border: solid 0.5rem rgb(0, 143, 209);
+    box-shadow: 0 0 1.5rem  rgb(0, 143, 209);
+}
+
 
 
 </style>
