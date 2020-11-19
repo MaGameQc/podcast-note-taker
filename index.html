@@ -41,6 +41,92 @@
 </html>
 
 <script>
+
+    let source ={
+        textarea : document.querySelector(".convert__textarea"),
+        convertBtn : document.querySelector(".convert__button"),
+        selectMenu : document.querySelector("convert__select"), 
+        selectedSeparator : document.querySelector(".convert__select").value,
+        textareaTextContent : "",
+        splitedText : [],
+
+        initialiseObject : ()=>{
+            source.setValues();
+            source.addConvertBtnListener();
+            // converter.addCopyBtnListener();
+            source.addSelectedSeparatorListener();
+        },
+
+        setValues : ()=>{
+            source.textareaTextContent = source.textarea.value;
+        },
+
+        reset : ()=>{
+            source.textarea.value = "";
+            source.selectedSeparator.value = "all";
+        },
+
+        addConvertBtnListener : ()=>{
+            source.convertBtn.addEventListener("click", ()=>{
+                // converted.reset();
+                source.setValues();
+                source.getRidOf(source.selectedSeparator);
+                console.log(source.splitedText);
+                // converter.convertTextIntoSentences(converter.sourceText);
+                // converter.addStatementsListener();
+                // converter.statementsHandler.addKeyboardListeners();
+            });
+        },
+
+        addSelectedSeparatorListener : ()=>{
+            document.querySelector(".convert__select").addEventListener("change", ()=>{
+                source.selectedSeparator = document.querySelector(".convert__select").value;
+            });
+        },
+
+        getRidOf: (selectedSeparator)=>{
+            switch (selectedSeparator) {
+                case "dot":
+                    source.splitedText = source.textareaTextContent.split(/[.]/g);
+                    break;
+
+                case "comma":
+                    source.splitedText = source.textareaTextContent.split(/[,]/g);
+                    break;
+
+                case "linebreak":
+                    source.splitedText = source.textareaTextContent.split(/[\n]/g);
+                    break;
+
+                case "quote":
+                    source.splitedText = source.textareaTextContent.split(/["]/g);
+                    break;
+
+                case "all":
+                    source.splitedText = source.textareaTextContent.split(/[\n\.\,\"]/g);
+                    break;
+            
+                default:
+                    console.log("not a valid selection");
+                    break;
+            }
+        },
+
+
+    }
+
+    source.initialiseObject();
+
+
+
+
+
+
+
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////old
+
     let converter ={
         convertBtn : document.querySelector(".convert__button"),
         copyBtn : document.querySelector(".selectedText__copyBtn"),
@@ -53,6 +139,7 @@
         mouseIndex : 0,
         savedSelectedStatement : "",
         selectedSeparator : document.querySelector(".convert__select").value,
+        alreadySelectedSentences : [],
         
         initialiseObject : ()=>{
             converter.setValues();
@@ -294,7 +381,11 @@
                     converter.selectedStatements.forEach((element)=>{
                         let test = base.indexOf(element);
                         if(test == 0){
-                            el.style.backgroundColor = "cyan";
+                            // el.style.backgroundColor = "cyan";
+                            converter.alreadySelectedSentences.push(el);
+                            converter.alreadySelectedSentences.forEach((e)=>{
+                                e.style.backgroundColor = "cyan";
+                            });
                         }
                     });
                 });
@@ -321,7 +412,7 @@
     }
 
 
-    converter.initialiseObject();
+    // converter.initialiseObject();
 
     let mouseEvents = {
         containers : [
@@ -400,9 +491,9 @@
         }
     }
 
-    mouseEvents.hover();
-    mouseEvents.focusListener();
-    mouseEvents.setInitialFocus();         
+    // mouseEvents.hover();
+    // mouseEvents.focusListener();
+    // mouseEvents.setInitialFocus();         
    
 
 
