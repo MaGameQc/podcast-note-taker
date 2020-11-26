@@ -71,7 +71,7 @@
                 // converted.reset();
                 source.setValues();
                 source.getRidOf(source.selectedSeparator);
-                console.log(source.splitedText);
+                converted.setValues(source.splitedText);
                 // converter.convertTextIntoSentences(converter.sourceText);
                 // converter.addStatementsListener();
                 // converter.statementsHandler.addKeyboardListeners();
@@ -118,8 +118,113 @@
     source.initialiseObject();
 
 
+    let converted = {
+        textarea : document.querySelector(".convertedText__container"),
+        splittedText : [],
+        storedPTags : [],
+        textToAddToNotes : [],
+        highlightAlreadySelectedP : [],
+
+        setValues : (splitedText)=>{
+            converted.splitedText = splitedText;
+            converted.splitedTextToHtmlP();
+            converted.addListeners();
+            console.log(converted.storedPTags);
+        },
+
+        splitedTextToHtmlP : ()=>{
+            converted.splitedText.forEach((text)=>{
+                let child = document.createElement("p");
+                let textContent = document.createTextNode("- " + text);
+                child.classList.add("convertedText__container_phrase");
+
+                child.appendChild(textContent);
+                converted.storedPTags.push(child);
+                converted.textarea.appendChild(child);
+            });
+
+        },
+
+        addListeners : ()=>{
+            converted.storedPTags.forEach((element)=>{
+                element.addEventListener("click", ()=>{
+                    let text = element.textContent;
+                    if(converted.isAlreadyInStored(text)){
+                        let indxOfAlreadyStoredStatement = converted.textToAddToNotes.indexOf(text);
+                        console.log(indxOfAlreadyStoredStatement);
+                        converted.deleteStatement(indxOfAlreadyStoredStatement);
+                        converted.removeHighlight(indxOfAlreadyStoredStatement);
+                    }else{
+                        converted.addStatement(text);
+                        converted.highlightAlreadySelectedP.push(element);
+                        converted.highlight();
+                    }
+                });
+
+                element.addEventListener("mouseenter", ()=>{
+                    element.style.backgroundColor = "cyan";
+                    element.style.cursor = "pointer";
+                });
+                element.addEventListener("mouseleave", ()=>{
+                    element.style.backgroundColor = "white";
+                    converted.highlight();
+                });
+            });
+        },
+
+        addStatement : (text)=>{
+            converted.textToAddToNotes.push(text);
+            notes.reWriteTextarea();
+        },
+
+        deleteStatement : (indx)=>{
+            converted.textToAddToNotes.splice(indx, 1);
+            notes.reWriteTextarea();
+        },
+
+        highlight : ()=>{
+            converted.highlightAlreadySelectedP.forEach((element)=>{
+                element.style.backgroundColor = "purple";
+            });
+        },
+
+        removeHighlight : (indx)=>{
+            converted.highlightAlreadySelectedP.splice(indx, 1);
+        },
 
 
+
+
+        isAlreadyInStored : (chosenStatement)=>{
+                let indxOfAlreadyStoredStatement = converted.textToAddToNotes.indexOf(chosenStatement);
+                if(indxOfAlreadyStoredStatement != -1){
+                    return true
+                }else{
+                    return false
+                }
+            },
+    }
+
+
+
+    let notes = {
+        textarea : document.querySelector(".selectedText__Textarea"),
+
+        resetTextarea : ()=>{
+            notes.textarea.value = "";
+        },
+
+        reWriteTextarea : ()=>{
+            notes.resetTextarea();
+            converted.textToAddToNotes.forEach((text)=>{
+                notes.textarea.value += text + "\n" + "\n";
+            });
+        },
+
+
+
+       
+    }
 
 
 
